@@ -52,7 +52,7 @@ public class Client {
     }
 }
 
-class Menu {
+public class Menu {
     
   public Menu() {
     
