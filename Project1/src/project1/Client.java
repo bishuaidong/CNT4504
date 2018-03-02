@@ -20,9 +20,10 @@ public class Client {
         Create socket object. Two parameters are passed, the first is the IP 
         of the server and the second is the port number
         */
+        int portNumber;
         try {
             System.out.println("Attempting to connect Client");
-            Socket connection = new Socket("localhost",args[0]);
+            Socket connection = new Socket("localhost", 10095);
         }
         catch (Exception e) {
             System.out.println("Connection unsuccessful");
