@@ -25,8 +25,8 @@ public class Client {
         of the server and the second is the port number
         */
         
-    	int threadCount;
-        ClientThread[] threads;
+    	int clientCount;
+        
         String host;
     	
         if (args.length < 1) {
@@ -36,10 +36,10 @@ public class Client {
             host = args[0];
             
             if (args.length == 2) {
-                threadCount = Integer.parseInt(args[1]);
+                clientCount = Integer.parseInt(args[1]);
             }
             else {
-                threadCount = 1;
+                clientCount = 1;
             }
             
             
@@ -59,22 +59,8 @@ public class Client {
                 else {
                     System.out.println("running " + command + "\n");
                     
-                    threads = new ClientThread[threadCount];
-                    for (int x = 0; x < threadCount; x++)
-                    	threads[x] = new ClientThread(command, host);
-                    
-                    boolean runningThreads = true;
-                    
-                    for (int x = 0; x < threads.length; x++)
-                    	threads[x].start();
-                    
-                    while (runningThreads) {
-                    	runningThreads = false;
-                    	for (int x = 0; x < threads.length; x++) {
-                    		if (threads[x].isAlive())
-                    			runningThreads = true;
-                    	}
-                    }
+                    ClientThread thread = new ClientThread(command, host, clientCount);
+                    thread.start();
                 }
          
             }
@@ -88,10 +74,11 @@ public class Client {
 class ClientThread extends Thread {
     public double start, end, total;
     public String command, host;
-    public int port = 8080;
+    public int port = 8080, clients;
     
-    public ClientThread(String com, String hos) {
-        command = com;
+    public ClientThread(String com, String hos, int cli) {
+        clients = cli;
+    	command = com;
         host = hos;
         total = 0;
         end = 0;
