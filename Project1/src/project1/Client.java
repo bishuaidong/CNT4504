@@ -22,7 +22,7 @@ public class Client {
         */
         try {
             System.out.println("Attempting to connect Client");
-            Socket connection = new Socket("localhost",8080);
+            Socket connection = new Socket("localhost",args[0]);
         }
         catch (Exception e) {
             System.out.println("Connection unsuccessful");
