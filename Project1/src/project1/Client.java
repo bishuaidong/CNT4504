@@ -103,7 +103,7 @@ class ClientThread extends Thread {
     	try {
     		String line = null;
             
-            Socket connection = new Socket("localhost", port);
+            Socket connection = new Socket(host, port);
             PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
             BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
     	}
