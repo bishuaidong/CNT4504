@@ -14,19 +14,21 @@ import java.util.*;
  * @author Varsha
  * @author Rishav
  * @author Clay
- * @author Danniel
+ * @author Daniel
  */
 public class Client {
     
     
     public static void main(String[] args) {
+        /*
+        Create socket object. Two parameters are passed, the first is the IP 
+        of the server and the second is the port number
+        */
         
-        
-        int threadCount;
+    	int threadCount;
         ClientThread[] threads;
         String host;
-        int portNumber = 8080;
-        
+    	
         if (args.length < 1) {
             System.out.println("Did not enter a host name. Goodbye.");
         }
@@ -39,7 +41,6 @@ public class Client {
             else {
                 threadCount = 1;
             }
-            
             
             
             Scanner in = new Scanner ( System.in );
@@ -57,7 +58,23 @@ public class Client {
                 }
                 else {
                     System.out.println("running " + command + "\n");
-               
+                    
+                    threads = new ClientThread[threadCount];
+                    for (int x = 0; x < threadCount; x++)
+                    	threads[x] = new ClientThread(command, host);
+                    
+                    boolean runningThreads = true;
+                    
+                    for (int x = 0; x < threads.length; x++)
+                    	threads[x].start();
+                    
+                    while (runningThreads) {
+                    	runningThreads = false;
+                    	for (int x = 0; x < threads.length; x++) {
+                    		if (threads[x].isAlive())
+                    			runningThreads = true;
+                    	}
+                    }
                 }
          
             }
