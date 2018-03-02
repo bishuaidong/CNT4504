@@ -116,20 +116,23 @@ class ClientThread extends Thread {
             PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
             BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             
-            //start timer
-            
-            //run command x times
+            //run command x times and adds the total time
             for(int x = 0; x < clients; x++) {
             	output.println(command);
             	
+            	start = System.currentTimeMillis();
+            	
             	while((line = input.readLine()) != null) 
             		System.out.println(line);
+            	
+            	end = System.currentTimeMillis();
+            	
+            	total += (end - start);
             }
             
-            //stop timer
-            
             //calculate and display latency
-            
+            latency = total / clients;
+            System.out.println(latency);
             
             output.close();
             input.close();
