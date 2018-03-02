@@ -118,7 +118,13 @@ class ClientThread extends Thread {
             
             //start timer
             
-            //run command n times
+            //run command x times
+            for(int x = 0; x < clients; x++) {
+            	output.println(command);
+            	
+            	while((line = input.readLine()) != null) 
+            		System.out.println(line);
+            }
             
             //stop timer
             
