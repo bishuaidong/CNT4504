@@ -19,7 +19,7 @@ public class Server {
             * object which Socket socket will capture.
             */
             System.out.println("Waiting for connection");
-            ServerSocket server = new ServerSocket(8080);
+            ServerSocket server = new ServerSocket(10095);
             
         } catch (Exception e) {
             /**
