@@ -21,7 +21,7 @@ public class Client {
     
     public static void main(String[] args) {
         
-    	int clientCount, port = 8080;
+    	int clientCount, port = 10095;
         String host;
     	
         //No command line arguments
