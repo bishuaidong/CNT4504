@@ -1,10 +1,10 @@
 package project1;
 
-import java.io*;
 import java.net.*;
-import java.text*;
-import java.util.*;
-import java.lang.management.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+
 
 public class Server {
 
@@ -12,14 +12,17 @@ public class Server {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        try {
+        
+    	ServerSocket server = null;
+    	
+    	try {
             /**server is server socket object and 8080 that is passed through
             is the port number that identifies the application on the network.
             * When a connection is made, server.accept() will return a socket
             * object which Socket socket will capture.
             */
             System.out.println("Waiting for connection");
-            ServerSocket server = new ServerSocket(10095);
+            server = new ServerSocket(10095);
             
         } catch (Exception e) {
             /**
@@ -43,7 +46,7 @@ public class Server {
             while(running) {
                 //Starts the I/O stream
                 PrintWriter out = new PrintWriter(connection.getOutputStream(), true);
-                bufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
                 
                 // waits for a command from the client
                 while(!connection.isClosed() && ((command = in.readLine()) != null)) {
@@ -89,9 +92,10 @@ public class Server {
             }
         }
         
-        catch {
+        catch(Exception e) {
             System.out.println("Connection unsuccessful");
             e.printStackTrace();
         }
     }
 }
+
