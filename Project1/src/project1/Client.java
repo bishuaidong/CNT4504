@@ -18,11 +18,14 @@ import java.util.*;
  */
 public class Client {
     
-    
-    public static void main(String[] args) {
+    public static int port = 10095;
+    public double totalLatency = 0;
+    public double avgLatency = 0;
+	
+    public void main(String[] args) {
         
-    	int clientCount, port = 10095;
-        String host;
+    	int clientCount;
+    	String host;
     	
         //No command line arguments
         if (args.length < 1) {
@@ -41,7 +44,6 @@ public class Client {
             else {
                 clientCount = 1;
             }
-            
             
             Scanner in = new Scanner ( System.in );
             Menu menu = new Menu();
@@ -70,13 +72,15 @@ public class Client {
                     System.out.println("Goodbye");
                     running = false;
                 }
-                //run the chosen command
+                //run the chosen command for all clients and prints the average latency
                 else {
-                    System.out.println("running " + command + "\n");
+                    System.out.println("running " + command + "\n\n");
                     
-                    //creates the thread that will run the chosen command n times
-                    ClientThread thread = new ClientThread(command, host, clientCount);
-                    thread.start();
+                    for(int x = 0; x < clientCount; x++)
+                    	executeCommand(args[0], command);
+                    
+                    avgLatency = totalLatency / clientCount;
+                    System.out.printf("Average latency for %d clients in milliseconds: %.0f", clientCount, avgLatency);
                 }
          
             }
@@ -85,54 +89,44 @@ public class Client {
         }
         
     }
-}
-
-class ClientThread extends Thread {
-    public double start, end, total;
-    public String command, host;
-    public int port = 8080, clients;
     
-    public ClientThread(String com, String hos, int cli) {
-        clients = cli;
-    	command = com;
-        host = hos;
-        total = 0;
-        end = 0;
-        start = 0;
-    }
-    
-    public void execute() {
-        System.out.println("Attempting to connect to the server");
+    public void executeCommand(String hostname, String command) {
+    	double start = 0;
+    	double end = 0;
+    	double latency = 0;
+    	
+    	System.out.println("Attempting to connect to the server");
         
-        //attempts to connect to the server, run the chosen command n times, and calculates and displays the latency
+    	//attempts to connect to the server, run the given command, and calculates latency
     	try {
     		String line = null;
             
             //connects to the server
-            Socket connection = new Socket(host, port);
+            Socket connection = new Socket(hostname, port);
+            connection.setSoTimeout(30000);
             System.out.println("Connection Successful");
             
             //opens I/O stream
             PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
             BufferedReader input = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             
-            //run command x times and adds the total time
-            for(int x = 0; x < clients; x++) {
-            	output.println(command);
+            //gives command to server
+            output.println(command);
+            
+            //start timer
+            start = System.currentTimeMillis();
             	
-            	start = System.currentTimeMillis();
-            	
-            	while((line = input.readLine()) != null) 
-            		System.out.println(line);
-            	
-            	end = System.currentTimeMillis();
-            	
-            	total += (end - start);
-            }
+            //print output
+            while((line = input.readLine()) != null) 
+            	System.out.println(line);
+            
+            //end timer
+            end = System.currentTimeMillis();
             
             //calculate and display latency
-            latency = total / clients;
-            System.out.println(latency);
+            latency = end - start;
+            totalLatency += latency;
+            System.out.printf("Latency in milliseconds: %.0f\n", latency);
             
             output.close();
             input.close();
@@ -142,7 +136,6 @@ class ClientThread extends Thread {
             System.out.println("Could not connect to the server");
     		e.printStackTrace();
     	}
-        
     }
 }
 
