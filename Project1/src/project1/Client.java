@@ -22,7 +22,7 @@ public class Client {
     public double totalLatency = 0;
     public double avgLatency = 0;
 	
-    public void main(String[] args) {
+    public static void main(String[] args) {
         
     	int clientCount;
     	String host;
@@ -46,6 +46,7 @@ public class Client {
             }
             
             Scanner in = new Scanner ( System.in );
+            Client client = new Client();
             Menu menu = new Menu();
             String command;
             boolean running = true;
@@ -77,10 +78,10 @@ public class Client {
                     System.out.println("running " + command + "\n\n");
                     
                     for(int x = 0; x < clientCount; x++)
-                    	executeCommand(args[0], command);
+                    	client.executeCommand(args[0], command);
                     
-                    avgLatency = totalLatency / clientCount;
-                    System.out.printf("Average latency for %d clients in milliseconds: %.0f", clientCount, avgLatency);
+                    client.avgLatency = client.totalLatency / clientCount;
+                    System.out.printf("Average latency for %d clients in milliseconds: %.0f", clientCount, client.avgLatency);
                 }
          
             }
@@ -89,6 +90,7 @@ public class Client {
         }
         
     }
+    
     
     public void executeCommand(String hostname, String command) {
     	double start = 0;
