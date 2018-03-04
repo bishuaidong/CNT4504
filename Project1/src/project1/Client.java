@@ -18,7 +18,7 @@ import java.util.*;
  */
 public class Client {
     
-    public static int port = 10095;
+    public static int port = 8090;
     public double totalLatency = 0;
     public double avgLatency = 0;
 	
@@ -73,6 +73,9 @@ public class Client {
                     System.out.println("Goodbye");
                     running = false;
                 }
+                else if (command.equals("invalid")) {
+                	System.out.println("Invalid option");
+                }
                 //run the chosen command for all clients and prints the average latency
                 else {
                     System.out.println("running " + command + "\n\n");
@@ -81,7 +84,10 @@ public class Client {
                     	client.executeCommand(args[0], command);
                     
                     client.avgLatency = client.totalLatency / clientCount;
-                    System.out.printf("Average latency for %d clients in milliseconds: %.0f", clientCount, client.avgLatency);
+                    System.out.printf("Average latency for %d clients in milliseconds: %.0f\n", clientCount, client.avgLatency);
+                    
+                    client.totalLatency = 0;
+                    client.avgLatency = 0;
                 }
          
             }
@@ -181,7 +187,7 @@ class Menu {
             command = "exit";
             break;
         default:
-            System.err.println ( "Invalid option\n" );
+            command = "invalid";
             break;
         }
       return command;
