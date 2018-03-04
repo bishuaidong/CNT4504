@@ -14,6 +14,7 @@ public class Server {
     public static void main(String[] args) {
         
     	ServerSocket server = null;
+    	Socket connection = null;
     	
     	try {
             /**server is server socket object and 8080 that is passed through
@@ -22,7 +23,7 @@ public class Server {
             * object which Socket socket will capture.
             */
             System.out.println("Waiting for connection");
-            server = new ServerSocket(10095);
+            server = new ServerSocket(8090);
             
         } catch (Exception e) {
             /**
@@ -37,13 +38,13 @@ public class Server {
         
         String command;
         
-        try {
-            Socket connection = server.accept();
-            System.out.println("Connection successful");
-            
+        try { 
             boolean running = true;
             
             while(running) {
+            	connection = server.accept();
+            	System.out.println("Connection successful");
+            	
                 //Starts the I/O stream
                 PrintWriter out = new PrintWriter(connection.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -73,8 +74,7 @@ public class Server {
                             
                             //prints the results on the server and on the client
                             while ((results = input.readLine()) != null) {
-                                //System.out.println(results);
-                                //try without this ^ first
+                                System.out.println(results);
                                 out.println(results);
                             }
                             
@@ -99,4 +99,3 @@ public class Server {
         }
     }
 }
-
