@@ -69,11 +69,12 @@ public class Server {
                             
                             //creates an input stream that saves the results as a string
                             BufferedReader input = new BufferedReader(new InputStreamReader(process.getInputStream()));
-                            String results = input.readLine();
+                            String results = null;
                             
                             //prints the results on the server and on the client
-                            while (results != null) {
-                                System.out.println(results);
+                            while ((results = input.readLine()) != null) {
+                                //System.out.println(results);
+                                //try without this ^ first
                                 out.println(results);
                             }
                             
