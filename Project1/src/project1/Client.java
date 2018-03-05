@@ -132,6 +132,8 @@ public class Client {
             //end timer
             end = System.currentTimeMillis();
             
+	    System.out.println("");
+		
             //calculate and display latency
             latency = end - start;
             totalLatency += latency;
