@@ -1,14 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package project1;
-
 import java.io.*;
 import java.net.*;
 import java.util.*;
 /**
+ * This is the main class for the Client. This class must take in at least 1 command line argument (host name), but an addition argument
+ * can be added to change the number of clients. A menu is then presented to the user with the options to display system time, the uptime, 
+ * the memory use, netstat, current users, and the running processes from the server. The Cient then connects to the Server and sends the 
+ * command for every client. After the command results are received for every client, the latency and average latency are displayed to 
+ * the user. The menu will loop until the exit command is chosen, and the Client and Server programs will end.
  *
  * @author Bishuai
  * @author Varsha
@@ -53,6 +51,7 @@ public class Client {
             
             //while the user has not exited, display the menu and run the chosen command
             while(running) {
+		//displays menu can gets the linux command
                 menu.display_menu();
                 command = menu.getCommand(in.next());
                 
@@ -73,28 +72,30 @@ public class Client {
                     System.out.println("Goodbye");
                     running = false;
                 }
+		//invalid option
                 else if (command.equals("invalid")) {
                 	System.out.println("Invalid option");
                 }
-                //run the chosen command for all clients and prints the average latency
+                //valid option - run the chosen command for all clients and prints the average latency
                 else {
                     System.out.println("running " + command + "\n\n");
                     
+		    //runs the command for every client
                     for(int x = 0; x < clientCount; x++)
                     	client.executeCommand(args[0], command);
                     
+	 	    //calculates and prints average latency
                     client.avgLatency = client.totalLatency / clientCount;
                     System.out.printf("Average latency for %d clients in milliseconds: %.0f\n", clientCount, client.avgLatency);
                     
+		    //resets latencies
                     client.totalLatency = 0;
                     client.avgLatency = 0;
                 }
          
             }
-        
             in.close();
-        }
-        
+        } 
     }
     
     
@@ -103,16 +104,16 @@ public class Client {
     	double end = 0;
     	double latency = 0;
     	
-    	System.out.println("Attempting to connect to the server");
+    	System.out.println("Attempting to connect to the server\n");
         
     	//attempts to connect to the server, run the given command, and calculates latency
     	try {
-    		String line = null;
+    	    String line = null;
             
             //connects to the server
             Socket connection = new Socket(hostname, port);
             connection.setSoTimeout(30000);
-            System.out.println("Connection Successful");
+            System.out.println("Connection Successful\n");
             
             //opens I/O stream
             PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
@@ -146,7 +147,10 @@ public class Client {
     	}
     }
 }
-
+/**
+* This class displays a menu to the user and determines which linux command to send to the server. The class also checks for invalid
+* choices.
+*/
 class Menu {
     
     public Menu() {
