@@ -1,39 +1,29 @@
-package project1;
-
 import java.net.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 
-
+/**
+* This is the main class for the Server. This class creates a socket for the Client to connect to. When a connection is accepted, the
+* server takes in the requested linux command from the client, runs the command on the server, and displays the output on both machines.
+*/
 public class Server {
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String[] args) {
         
     	ServerSocket server = null;
     	Socket connection = null;
     	
     	try {
-            /**server is server socket object and 8080 that is passed through
-            is the port number that identifies the application on the network.
-            * When a connection is made, server.accept() will return a socket
-            * object which Socket socket will capture.
-            */
+            //creates a server socket object with the correct port number
+            //this must be accepted for the connection to be established
             System.out.println("Waiting for connection");
             server = new ServerSocket(8090);
             
-        } catch (Exception e) {
-            /**
-             * Try catch used in case connection was not found. Will display
-             * error to user.
-             */
-            
+        } 
+        catch (Exception e) {
             //for diagnosis, use
             e.printStackTrace();
-            
         }
         
         String command;
@@ -41,7 +31,9 @@ public class Server {
         try { 
             boolean running = true;
             
+            //runs until the exit command is given
             while(running) {
+                //client to server connection is accepted
             	connection = server.accept();
             	System.out.println("Connection successful");
             	
@@ -56,7 +48,7 @@ public class Server {
                     
                     //exits the server when given the exit command
                     if (command.equals("exit")) {
-                        System.out.println("Exiting the Server");
+                        System.out.println("Exiting the Server\n");
                         running = false;
                         break;
                     }
@@ -78,23 +70,22 @@ public class Server {
                                 out.println(results);
                             }
                             
-                            out.close(); //close output stream
-                            System.out.println("Complete");
+                            //close output stream
+                            out.close(); 
+                            System.out.println("\nComplete\n");
                             
                             process.waitFor();
                         }
-                        
                         catch(Exception e) {
-                            System.out.println("An Error has occured");
+                            System.out.println("An Error has occured\n");
                             e.printStackTrace();
                         }
                     }
                 }
             }
         }
-        
         catch(Exception e) {
-            System.out.println("Connection unsuccessful");
+            System.out.println("Connection unsuccessful\n");
             e.printStackTrace();
         }
     }
