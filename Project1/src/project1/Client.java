@@ -27,7 +27,7 @@ public class Client {
     	
         //No command line arguments
         if (args.length < 1) {
-            System.out.println("Did not enter a host name. Goodbye.");
+            System.out.println("Did not enter a host name. Goodbye.\n");
         }
         //at least 1 command line argument
         else {
@@ -59,7 +59,7 @@ public class Client {
                 if(command.equals("exit")) {
                     //tells the server to exit
                     try {
-                		Socket connection = new Socket(host, port);
+                	Socket connection = new Socket(host, port);
                         PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
                         output.println("exit");
                         connection.close();
@@ -69,12 +69,12 @@ public class Client {
                     }
                     
                     //exits the client
-                    System.out.println("Goodbye");
+                    System.out.println("Goodbye\n");
                     running = false;
                 }
 		//invalid option
                 else if (command.equals("invalid")) {
-                	System.out.println("Invalid option");
+                	System.out.println("Invalid option\n");
                 }
                 //valid option - run the chosen command for all clients and prints the average latency
                 else {
@@ -86,7 +86,7 @@ public class Client {
                     
 	 	    //calculates and prints average latency
                     client.avgLatency = client.totalLatency / clientCount;
-                    System.out.printf("Average latency for %d clients in milliseconds: %.0f\n", clientCount, client.avgLatency);
+                    System.out.printf("Average latency for %d clients in milliseconds: %.0f\n\n", clientCount, client.avgLatency);
                     
 		    //resets latencies
                     client.totalLatency = 0;
@@ -135,14 +135,14 @@ public class Client {
             //calculate and display latency
             latency = end - start;
             totalLatency += latency;
-            System.out.printf("Latency in milliseconds: %.0f\n", latency);
+            System.out.printf("Latency in milliseconds: %.0f\n\n", latency);
             
             output.close();
             input.close();
             connection.close();
     	}
     	catch (Exception e) {
-            System.out.println("Could not connect to the server");
+            System.out.println("Could not connect to the server\n");
     		e.printStackTrace();
     	}
     }
