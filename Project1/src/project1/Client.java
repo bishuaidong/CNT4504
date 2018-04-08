@@ -17,13 +17,20 @@ import java.util.*;
 public class Client {
     
     public static int port = 8090;
-    public double totalLatency = 0;
-    public double avgLatency = 0;
+    public static ClientThread[] threads;
+    public static int clientCount;
+    public static String host;
+    public static String Incommand;
+    public static int x;
 	
     public static void main(String[] args) {
         
-    	int clientCount;
-    	String host;
+    	
+    	
+        double totalLatency = 0;
+        double avgLatency = 0;
+    	
+    	
     	
         //No command line arguments
         if (args.length < 1) {
@@ -46,20 +53,20 @@ public class Client {
             Scanner in = new Scanner ( System.in );
             Client client = new Client();
             Menu menu = new Menu();
-            String command;
+            
             boolean running = true;
             
             //while the user has not exited, display the menu and run the chosen command
             while(running) {
 		//displays menu can gets the linux command
                 menu.display_menu();
-                command = menu.getCommand(in.next());
+                Incommand = menu.getCommand(in.next());
                 
                 //exit menu
-                if(command.equals("exit")) {
+                if(Incommand.equals("exit")) {
                     //tells the server to exit
                     try {
-                	Socket connection = new Socket(host, port);
+                    	Socket connection = new Socket(host, port);
                         PrintWriter output = new PrintWriter(connection.getOutputStream(), true);
                         output.println("exit");
                         connection.close();
@@ -73,45 +80,69 @@ public class Client {
                     running = false;
                 }
 		//invalid option
-                else if (command.equals("invalid")) {
+                else if (Incommand.equals("invalid")) {
                 	System.out.println("Invalid option\n");
                 }
                 //valid option - run the chosen command for all clients and prints the average latency
                 else {
-                    System.out.println("running " + command + "\n\n");
+                    System.out.println("running " + Incommand + "\n\n");
                     
 		    //runs the command for every client
-                    for(int x = 0; x < clientCount; x++)
-                    	client.executeCommand(args[0], command);
+                    threads = new ClientThread[clientCount];
+                    
+                    for (x = 0; x < clientCount; x++)
+                    	threads[x] = new ClientThread(Incommand, host);
+                    
+                    for (x = 0; x < threads.length; x++)
+                    	threads[x].start();
+                    
+                    for (x = 0; x < threads.length; x++) {
+                    	try {
+                    		threads[x].join();
+                    	}
+                    	catch (Exception e){
+                    		e.printStackTrace();
+                    	}
+                    }
+                    	
+                    
+                    for (x = 0; x < threads.length; x++)
+                    	totalLatency += threads[x].latency;
+                    
+                    
                     
 	 	    //calculates and prints average latency
-                    client.avgLatency = client.totalLatency / clientCount;
-                    System.out.printf("Average latency for %d clients in milliseconds: %.0f\n\n", clientCount, client.avgLatency);
+                    avgLatency = totalLatency / clientCount;
+                    System.out.printf("Average latency for %d clients in milliseconds: %.0f\n\n", clientCount, avgLatency);
                     
 		    //resets latencies
-                    client.totalLatency = 0;
-                    client.avgLatency = 0;
+                    totalLatency = 0;
+                    avgLatency = 0;
                 }
          
             }
             in.close();
-        } 
+        }
     }
-    
-    
-    public void executeCommand(String hostname, String command) {
-    	double start = 0;
-    	double end = 0;
-    	double latency = 0;
-    	
-    	System.out.println("Attempting to connect to the server\n");
-        
-    	//attempts to connect to the server, run the given command, and calculates latency
-    	try {
+}    
+
+class ClientThread extends Thread {
+	public double latency, end, start;
+	public String command, host;
+	public int port = 8090;
+	
+	public ClientThread(String com, String hos) {
+		command = com;
+		host = hos;
+		latency = 0;
+	}
+	
+	public void run() {
+		try {
     	    String line = null;
             
             //connects to the server
-            Socket connection = new Socket(hostname, port);
+            Socket connection = new Socket(host, port);
             connection.setSoTimeout(30000);
             System.out.println("Connection Successful\n");
             
@@ -132,11 +163,10 @@ public class Client {
             //end timer
             end = System.currentTimeMillis();
             
-	    System.out.println("");
+            System.out.println("");
 		
             //calculate and display latency
             latency = end - start;
-            totalLatency += latency;
             System.out.printf("Latency in milliseconds: %.0f\n\n", latency);
             
             output.close();
@@ -147,8 +177,11 @@ public class Client {
             System.out.println("Could not connect to the server\n");
     		e.printStackTrace();
     	}
-    }
+	}
+	
 }
+
+
 /**
 * This class displays a menu to the user and determines which linux command to send to the server. The class also checks for invalid
 * choices.
@@ -182,7 +215,7 @@ class Menu {
             break;
         case "5":
             System.out.println ( "current users\n" );
-            command = "users";
+            command = "who";
             break;
         case "6":
             System.out.println ( "running processes\n" );
